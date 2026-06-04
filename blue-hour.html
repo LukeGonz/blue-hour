@@ -321,6 +321,22 @@
       max-width: 600px;
     }
 
+    /* Section: Caviar Service Image */
+    .caviar-section {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      overflow: hidden;
+      background-color: #0f1f3d;
+    }
+
+    .caviar-bg {
+      position: absolute;
+      inset: 0;
+      background: url('blue-hour-caviar-service.jpeg') no-repeat 25% center/cover;
+      z-index: 1;
+    }
+
     /* Section: Menu / Experience */
     .experience {
       background-color: rgba(255, 255, 255, 0.03);
@@ -631,6 +647,9 @@
       .concept-headline {
         font-size: 34px;
       }
+      .caviar-section {
+        height: 300px;
+      }
       .experience {
         padding: 80px 0 60px;
       }
@@ -712,6 +731,12 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- Section: Caviar Service Image -->
+  <section class="caviar-section">
+    <div class="grain"></div>
+    <div class="caviar-bg"></div>
   </section>
 
   <!-- Section: Menu / Experience -->
