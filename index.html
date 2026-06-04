@@ -325,23 +325,42 @@
     .caviar-section {
       position: relative;
       width: 100%;
-      height: 600px;
-      max-height: 75vw;
+      height: 520px;
       overflow: hidden;
       background-color: #0f1f3d;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .caviar-left {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .caviar-split-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: left center;
+      display: block;
+    }
+
+    .caviar-right {
+      width: 100%;
+      height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
+      background-color: #0f1f3d;
+      position: relative;
     }
 
-    .caviar-img {
-      height: 100%;
-      width: auto;
-      max-width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: contain;
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-      mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    .caviar-divider {
+      width: 48px;
+      height: 1px;
+      background-color: rgba(201, 162, 58, 0.5);
     }
 
     /* Section: Menu / Experience */
@@ -654,6 +673,11 @@
       .concept-headline {
         font-size: 34px;
       }
+      .caviar-section {
+        grid-template-columns: 1fr;
+        grid-template-rows: 260px 260px;
+        height: 520px;
+      }
       .experience {
         padding: 80px 0 60px;
       }
@@ -740,7 +764,12 @@
   <!-- Section: Caviar Service Image -->
   <section class="caviar-section">
     <div class="grain"></div>
-    <img src="blue-hour-caviar-service.jpeg" alt="Caviar Service" class="caviar-img">
+    <div class="caviar-left">
+      <img src="blue-hour-caviar-service.jpeg" alt="Caviar Service" class="caviar-split-img">
+    </div>
+    <div class="caviar-right">
+      <div class="caviar-divider"></div>
+    </div>
   </section>
 
   <!-- Section: Menu / Experience -->
