@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Blue Hour - A private dining and late-night supper club experience in Los Angeles.">
+  <title>Blue Hour - Los Angeles</title>
+  <!-- Google Fonts: Cormorant Garamond and Epilogue -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Epilogue:wght@300;400&display=swap" rel="stylesheet" />
+  
+  <style>
+    /* Reset & Base System */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: #0f1f3d; /* Base canvas */
+      color: #e8edf5; /* Cold near-white text */
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      overflow-x: hidden;
+      background-color: #0f1f3d;
+    }
+
+    /* Container Utility */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 max(24px, 4vw);
+    }
+
+    /* Grain Overlay */
+    .grain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* Section Styling */
+    section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      z-index: 100;
+      background: rgba(15, 31, 61, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      transition: background 0.3s ease;
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 max(24px, 4vw);
+    }
+
+    .nav-logo {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #e8edf5;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav-logo:hover {
+      opacity: 0.8;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #6b7a94;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #e8edf5;
+    }
+
+    .nav-link.btn-reserve {
+      color: #c9a23a;
+      border: 1px solid rgba(201, 162, 58, 0.6);
+      padding: 8px 18px;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link.btn-reserve:hover {
+      background: rgba(201, 162, 58, 0.08);
+      border-color: #c9a23a;
+      color: #c9a23a;
+    }
+
+    /* Keyframes for Hero Animations */
+    @keyframes kenBurns {
+      from {
+        transform: scale(1.06);
+      }
+      to {
+        transform: scale(1.0);
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at bottom center, rgba(201, 162, 58, 0.08) 0%, rgba(15, 31, 61, 0) 50%), #0f1f3d;
+      animation: kenBurns 8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 800px;
+      padding: 0 24px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0.15em;
+      color: #6b7a94;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 96px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e8edf5;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+    }
+
+    .hero-subline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 20px;
+      color: rgba(232, 237, 245, 0.6);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.3s forwards;
+    }
+
+    .hero-divider {
+      width: 48px;
+      height: 1px;
+      background-color: rgba(201, 162, 58, 0.5);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.5s forwards;
+    }
+
+    .hero-cta {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #c9a23a;
+      text-decoration: none;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      animation: fadeUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.6s forwards;
+    }
+
+    .hero-cta:hover {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+
+    /* Section: The Hour (Concept) */
+    .concept {
+      padding: 120px 0;
+      background-color: #0f1f3d;
+      border-top: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1.9fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .concept-left {
+      display: flex;
+      justify-content: flex-start;
+      user-select: none;
+    }
+
+    .concept-numeral {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 160px;
+      line-height: 1;
+      color: rgba(201, 162, 58, 0.15);
+      letter-spacing: -0.02em;
+    }
+
+    .concept-right {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-eyebrow {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #6b7a94;
+    }
+
+    .concept-headline {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 42px;
+      line-height: 1.2;
+      color: #e8edf5;
+      margin-bottom: 8px;
+    }
+
+    .concept-body {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.8;
+      color: rgba(232, 237, 245, 0.7);
+      max-width: 600px;
+    }
+
+    /* Section: Menu / Experience */
+    .experience {
+      background-color: rgba(255, 255, 255, 0.03);
+      padding: 100px 0;
+      text-align: center;
+    }
+
+    .experience-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 max(24px, 4vw);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .experience-headline {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 64px;
+      color: #e8edf5;
+      line-height: 1.2;
+      margin-top: 16px;
+      margin-bottom: 40px;
+    }
+
+    .descriptors {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 18px;
+      color: rgba(232, 237, 245, 0.5);
+      max-width: 800px;
+    }
+
+    .descriptors span {
+      display: inline-block;
+    }
+
+    .descriptors .dot {
+      color: #c9a23a;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .experience-hr {
+      width: 100%;
+      height: 1px;
+      background-color: rgba(201, 162, 58, 0.2);
+      border: none;
+      margin-top: 64px;
+    }
+
+    /* Section: Reserve */
+    .reserve {
+      padding: 120px 0;
+      background-color: #0f1f3d;
+    }
+
+    .reserve-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 max(24px, 4vw);
+    }
+
+    .reserve-headline {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 72px;
+      color: #e8edf5;
+      line-height: 1.1;
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+
+    .reserve-subtext {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 17px;
+      line-height: 1.6;
+      color: rgba(232, 237, 245, 0.55);
+      margin-bottom: 48px;
+      max-width: 560px;
+    }
+
+    /* Form Styles */
+    .reserve-form {
+      width: 100%;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-input, .form-select {
+      background-color: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(201, 162, 58, 0.25);
+      color: #e8edf5;
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      padding: 14px 20px;
+      border-radius: 2px;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23c9a23a' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 20px center;
+      padding-right: 48px;
+    }
+
+    .form-input::placeholder {
+      color: rgba(107, 122, 148, 0.5);
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: rgba(201, 162, 58, 0.65);
+      background-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .form-select-group {
+      margin-bottom: 32px;
+    }
+
+    .form-submit-btn {
+      background-color: #c9a23a;
+      color: #0f1f3d;
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .form-submit-btn:hover {
+      background-color: rgba(201, 162, 58, 0.85);
+    }
+
+    .form-submit-btn:active {
+      transform: scale(0.995);
+    }
+
+    .form-message {
+      margin-top: 16px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: #c9a23a;
+      display: none;
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    /* Footer */
+    footer {
+      padding: 64px max(24px, 4vw) 48px;
+      background-color: #0f1f3d;
+      border-top: 1px solid rgba(255, 255, 255, 0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-eyebrow {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(107, 122, 148, 0.5);
+      margin-bottom: 24px;
+    }
+
+    .footer-logo {
+      width: 48px;
+      height: 48px;
+      display: block;
+      margin: 0 auto 24px;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer-logo:hover {
+      opacity: 0.8;
+    }
+
+    .footer-copyright {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(107, 122, 148, 0.35);
+      margin-bottom: 16px;
+    }
+
+    .footer-attribution {
+      font-family: 'Epilogue', sans-serif;
+      font-weight: 300;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(107, 122, 148, 0.3);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-attribution:hover {
+      color: rgba(107, 122, 148, 0.6);
+    }
+
+    /* Media Queries & Mobile Responsiveness */
+    @media (max-width: 1024px) {
+      .hero-title {
+        font-size: 80px;
+      }
+      .reserve-headline {
+        font-size: 60px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 56px;
+      }
+      .hero-subline {
+        font-size: 18px;
+      }
+      .concept {
+        padding: 80px 0;
+      }
+      .concept-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .concept-numeral {
+        font-size: 120px;
+      }
+      .concept-headline {
+        font-size: 34px;
+      }
+      .experience {
+        padding: 80px 0;
+      }
+      .experience-headline {
+        font-size: 44px;
+        margin-bottom: 32px;
+      }
+      .descriptors {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .descriptors .dot {
+        display: none;
+      }
+      .reserve {
+        padding: 80px 0;
+      }
+      .reserve-headline {
+        font-size: 44px;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="#" class="nav-logo">Blue Hour</a>
+      <div class="nav-links">
+        <a href="#concept" class="nav-link">About</a>
+        <a href="#reserve" class="nav-link btn-reserve">Reserve</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="grain"></div>
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <span class="hero-eyebrow">Los Angeles</span>
+      <h1 class="hero-title">Blue Hour</h1>
+      <p class="hero-subline">A place for the in-between.</p>
+      <div class="hero-divider"></div>
+      <a href="#reserve" class="hero-cta">Reserve a table</a>
+    </div>
+  </section>
+
+  <!-- Section: The Hour (Concept) -->
+  <section class="concept" id="concept">
+    <div class="grain"></div>
+    <div class="container">
+      <div class="concept-grid">
+        <div class="concept-left">
+          <span class="concept-numeral">20</span>
+        </div>
+        <div class="concept-right">
+          <span class="section-eyebrow">The Concept</span>
+          <h2 class="concept-headline">Twenty minutes. Every evening.</h2>
+          <p class="concept-body">
+            Blue hour lasts twenty minutes. The sky holds a blue that doesn't exist at any other time -- saturated, still, slightly electric. Blue Hour was built around that window. A restaurant for the people who notice it.
+          </p>
+          <p class="concept-body">
+            Dinner begins at dusk. The room is designed to hold that specific quality of light for as long as possible. By the time it's fully dark, you've already decided to stay.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Menu / Experience -->
+  <section class="experience" id="experience">
+    <div class="grain"></div>
+    <div class="experience-container">
+      <span class="section-eyebrow">The Experience</span>
+      <h2 class="experience-headline">Dinner. Then the night.</h2>
+      <div class="descriptors">
+        <span>Seasonal tasting menu, chef-driven</span>
+        <span class="dot">&middot;</span>
+        <span>Natural wine and spirits, curated nightly</span>
+        <span class="dot">&middot;</span>
+        <span>Private dining available by arrangement</span>
+      </div>
+      <hr class="experience-hr" />
+    </div>
+  </section>
+
+  <!-- Section: Reserve -->
+  <section class="reserve" id="reserve">
+    <div class="grain"></div>
+    <div class="reserve-container">
+      <span class="section-eyebrow">Reservations</span>
+      <h2 class="reserve-headline">The table is set.</h2>
+      <p class="reserve-subtext">
+        Blue Hour seats thirty-two. Reservations open six weeks in advance. For private events and buyouts, reach us directly.
+      </p>
+      
+      <form class="reserve-form" id="reserveForm">
+        <div class="form-row">
+          <div class="form-group">
+            <input type="text" class="form-input" id="name" name="name" placeholder="Name" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-input" id="email" name="email" placeholder="Email" required autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group form-select-group">
+          <select class="form-select" id="party" name="party" required>
+            <option value="" disabled selected>Party Size</option>
+            <option value="2">Party of 2</option>
+            <option value="4">Party of 4</option>
+            <option value="6">Party of 6</option>
+            <option value="private">Private Buyout Inquiry</option>
+          </select>
+        </div>
+        <button type="submit" class="form-submit-btn">Request Reservation</button>
+        <div class="form-message" id="formMessage">Inquiry received. We will be in touch shortly.</div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="grain"></div>
+    <span class="footer-eyebrow">Gonzalez Global</span>
+    <img src="references/assets/logo-mark-only.svg" alt="Gonzalez Global Logo" class="footer-logo">
+    <div class="footer-copyright">&copy; 2026 Blue Hour</div>
+    <a href="https://www.gonzalezglobal.net" class="footer-attribution" target="_blank" rel="noopener noreferrer">Site by Gonzalez Global</a>
+  </footer>
+
+  <script>
+    // Handle form submit elegantly
+    const form = document.getElementById('reserveForm');
+    const message = document.getElementById('formMessage');
+    
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Basic aesthetic fade in for the message
+      message.style.display = 'block';
+      
+      // Clear inputs
+      form.reset();
+    });
+  </script>
+</body>
+</html>
