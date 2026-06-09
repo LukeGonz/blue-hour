@@ -145,7 +145,7 @@
   <circle class="node-core" cx="112" cy="33" r="1.8" fill="#1a1814"/>
 
   <path class="g-path"
-    d="M 137.4 79.3 A 48 48 0 1 0 160 120 L 134 120"
+    d="M 112 72 A 48 48 0 1 0 154 144 L 154 120 L 128 120"
     stroke="#f0ebe0" stroke-width="2.6"
     stroke-linecap="round" stroke-linejoin="round"
     fill="none"/>
